@@ -1,0 +1,10 @@
+{
+  "planet": "YourPlanet",
+  "ships": {
+    "Nave pequeña de carga": 100
+  },
+  "targets": [
+    [1, 1, 1],
+    [1, 1, 2]
+  ]
+}
