@@ -28,7 +28,7 @@ Then close and reopen your terminal so the `uv` command becomes available.
 ### Step 2: Clone the project and install dependencies
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/aljrico/ogame-bot.git
 cd ogame-bot
 uv sync
 uv run playwright install
