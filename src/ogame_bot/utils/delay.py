@@ -4,7 +4,7 @@ import random
 import time
 
 
-def human_delay(min_sec: float = 1.0, max_sec: float = 3.0) -> float:
+def human_delay(min_sec: float = 0.5, max_sec: float = 1.0) -> float:
     """
     Wait for a random duration (normally distributed) to simulate human behavior.
 
