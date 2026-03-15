@@ -331,8 +331,10 @@ class Fleet:
         if not self.set_coordinates(position="16"):
             return False
 
-        # Select expedition mission
-        if not self.select_expedition():
+        # Select expedition mission (only needed when sending probes,
+        # otherwise OGame auto-selects expedition)
+        sends_probes = ships.get("Sonda de Espionaje", 0) > 0
+        if sends_probes and not self.select_expedition():
             return False
 
         # Send the fleet
