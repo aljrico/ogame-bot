@@ -1,10 +1,11 @@
 {
-  "planet": "YourPlanet",
   "ships": {
     "Segador": 1,
     "Explorador": 1,
     "Destructor": 1,
     "Sonda de Espionaje": 1,
     "Nave grande de carga": 500
-  }
+  },
+  "planets": ["FirstPlanet", "SecondPlanet"],
+  "overflow_planet": "YourMainPlanet"
 }

@@ -10,8 +10,9 @@ from typing import Any
 
 @dataclass(frozen=True)
 class ExpeditionConfig:
-    planet: str
     ships: dict[str, int]
+    overflow_planet: str
+    planets: tuple[str, ...] = ()
     max_expeditions: int | None = None
 
 
@@ -24,13 +25,19 @@ class FarmingConfig:
 
 def load_expeditions(path: Path) -> ExpeditionConfig:
     data = _load_json(path)
-    planet = _require_str(data, "planet", path)
     ships = _require_ships(data, path)
+    overflow_planet = _require_str(data, "overflow_planet", path)
+    planets = _optional_planets(data, path)
     max_expeditions = data.get("max_expeditions")
     if max_expeditions is not None:
         if not isinstance(max_expeditions, int) or max_expeditions < 0:
             raise ValueError(f"{path}: max_expeditions must be a non-negative integer")
-    return ExpeditionConfig(planet=planet, ships=ships, max_expeditions=max_expeditions)
+    return ExpeditionConfig(
+        ships=ships,
+        overflow_planet=overflow_planet,
+        planets=planets,
+        max_expeditions=max_expeditions,
+    )
 
 
 def load_farming(path: Path) -> FarmingConfig:
@@ -56,6 +63,18 @@ def _require_str(data: dict[str, Any], key: str, path: Path) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{path}: '{key}' must be a non-empty string")
     return value
+
+
+def _optional_planets(data: dict[str, Any], path: Path) -> tuple[str, ...]:
+    planets = data.get("planets", [])
+    if not isinstance(planets, list):
+        raise ValueError(f"{path}: 'planets' must be an array of planet names")
+    parsed: list[str] = []
+    for name in planets:
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(f"{path}: planet names must be non-empty strings")
+        parsed.append(name)
+    return tuple(parsed)
 
 
 def _require_ships(data: dict[str, Any], path: Path) -> dict[str, int]:

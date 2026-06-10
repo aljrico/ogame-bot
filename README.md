@@ -67,24 +67,29 @@ Now open `config/expeditions.json` in any text editor. It looks like this:
 
 ```json
 {
-  "planet": "YourPlanet",
   "ships": {
     "Segador": 1,
     "Explorador": 1,
     "Destructor": 1,
     "Sonda de Espionaje": 1,
     "Nave grande de carga": 500
-  }
+  },
+  "planets": ["FirstPlanet", "SecondPlanet"],
+  "overflow_planet": "YourMainPlanet"
 }
 ```
 
 Change the values to match your game:
 
-- **`planet`**: Replace `"YourPlanet"` with the name of your planet in OGame
-  (exactly as it appears in the game, e.g. `"Homeworld"`).
 - **`ships`**: Set the number next to each ship type to however many you want
   to send per expedition. The ship names must match what you see in OGame
   (they depend on your language setting).
+- **`planets`**: Spread expeditions across these planets, one each, in order.
+  Names match OGame and are matched case-insensitively. Leave it empty (`[]`)
+  to send every expedition from `overflow_planet`.
+- **`overflow_planet`**: Where any remaining expedition slots launch from after
+  each planet in `planets` has sent one. Expedition slots are account-wide, so
+  with 9 slots and 6 listed planets, the 3 leftover go from here.
 
 Then do the same for `config/farming.json`:
 
