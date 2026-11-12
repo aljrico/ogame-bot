@@ -1,7 +1,7 @@
 OGame Bot
 =========
 
-Automates OGame expeditions and farm attacks using Playwright.
+Automates OGame expeditions using Playwright.
 
 Quick start
 -----------
@@ -37,30 +37,20 @@ uv run playwright install
 `uv sync` installs all the Python packages the bot needs. The second command
 installs the browser that the bot will use to play OGame for you.
 
-### Step 3: Create your personal config files
+### Step 3: Create your personal config file
 
-The bot needs to know **which planet** to launch from and **which ships** to
-send. Example config files are included -- you just need to copy them and fill
+The bot needs to know **which planets** to launch from and **which ships** to
+send. An example config file is included -- you just need to copy it and fill
 in your own values.
-
-> **Only want expeditions?** If you don't care about farm attacks and just want
-> to send expeditions, you only need `config/expeditions.json`. You can skip
-> creating the farming config entirely -- just make sure to always run the bot
-> with `--expeditions-only` (shown in Step 4).
-
-Run these commands to create your config files (skip the farming one if you
-only want expeditions):
 
 **Mac / Linux:**
 ```bash
 cp config/expeditions.example.json config/expeditions.json
-cp config/farming.example.json config/farming.json      # optional, only for farming
 ```
 
 **Windows** (Command Prompt or PowerShell):
 ```cmd
 copy config\expeditions.example.json config\expeditions.json
-copy config\farming.example.json config\farming.json      &REM optional, only for farming
 ```
 
 Now open `config/expeditions.json` in any text editor. It looks like this:
@@ -91,28 +81,8 @@ Change the values to match your game:
   each planet in `planets` has sent one. Expedition slots are account-wide, so
   with 9 slots and 6 listed planets, the 3 leftover go from here.
 
-Then do the same for `config/farming.json`:
-
-```json
-{
-  "planet": "YourPlanet",
-  "ships": {
-    "Nave pequeña de carga": 100
-  },
-  "targets": [
-    [1, 1, 1],
-    [1, 1, 2]
-  ]
-}
-```
-
-- **`planet`**: Same as above -- the planet you want to attack from.
-- **`ships`**: The ships to send on each farm attack.
-- **`targets`**: A list of coordinates to attack. Each target is written as
-  `[galaxy, system, position]`. You can add as many as you want.
-
-Your config files are personal and won't be uploaded if you push code -- they
-are excluded from git on purpose.
+Your config file is personal and won't be uploaded if you push code -- it
+is excluded from git on purpose.
 
 ### Step 4: Run the bot
 
@@ -122,12 +92,6 @@ uv run python main.py
 
 The first time you run it, a browser window will open and you'll need to log in
 to OGame manually. After that, the bot remembers your session.
-
-To run **only expeditions** (skip farm attacks):
-
-```bash
-uv run python main.py --expeditions-only
-```
 
 Configuration
 -------------
@@ -139,7 +103,6 @@ Environment variables (optional, loaded via `.env`):
 - `HEADLESS`: `true` or `false` (default `false`)
 - `SLOW_MO`: delay between actions in ms (default `50`)
 - `EXPEDITIONS_CONFIG`: path to expeditions JSON (default `config/expeditions.json`)
-- `FARMING_CONFIG`: path to farming JSON (default `config/farming.json`)
 
 Example `.env`
 --------------

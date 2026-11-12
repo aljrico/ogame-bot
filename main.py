@@ -8,7 +8,7 @@ from src.ogame_bot.bot import OGameBot
 from src.ogame_bot.config import OGameConfig
 from src.ogame_bot.actions.fleet import Fleet
 from src.ogame_bot.actions.navigation import Navigation
-from src.ogame_bot.mission_config import load_expeditions, load_farming
+from src.ogame_bot.mission_config import load_expeditions
 from src.ogame_bot.utils.delay import human_delay
 
 
@@ -17,7 +17,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--expeditions-only",
         action="store_true",
-        help="Run only expedition missions and skip farming.",
+        help=argparse.SUPPRESS,  # Deprecated no-op, kept so existing cron jobs don't break.
     )
     return parser.parse_args()
 
@@ -33,7 +33,7 @@ def main():
     """Run the OGame bot."""
     print("Starting OGame Bot...\n")
 
-    args = _parse_args()
+    _parse_args()
 
     config = OGameConfig.from_env()
 
@@ -41,29 +41,21 @@ def main():
     print(f"Bot profile: {config.chrome_user_data_dir}\n")
 
     expeditions_path = _config_path("EXPEDITIONS_CONFIG", "expeditions.json")
-    farming_path = _config_path("FARMING_CONFIG", "farming.json")
 
     try:
         expedition_config = load_expeditions(expeditions_path)
-        farming_config = None
-        if not args.expeditions_only:
-            farming_config = load_farming(farming_path)
     except (FileNotFoundError, ValueError) as exc:
         print(f"Config error: {exc}")
         return
 
-    print(f"Expeditions config: {expeditions_path}")
-    if not args.expeditions_only:
-        print(f"Farming config: {farming_path}")
-    print()
+    print(f"Expeditions config: {expeditions_path}\n")
 
     with OGameBot(config) as bot:
         fleet = Fleet(bot.page)
         nav = Navigation(bot.page)
 
-        # === 1. EXPEDITIONS ===
         print("\n" + "="*60)
-        print("PHASE 1: EXPEDITIONS")
+        print("EXPEDITIONS")
         print("="*60)
 
         # Expedition slots are account-wide, so any planet works to read them.
@@ -92,22 +84,6 @@ def main():
                     planet=planet,
                     ships=expedition_config.ships,
                 )
-
-        # === 2. FARM ATTACKS ===
-        if args.expeditions_only:
-            print("\n" + "="*60)
-            print("PHASE 2: FARM ATTACKS (SKIPPED)")
-            print("="*60)
-        else:
-            print("\n" + "="*60)
-            print("PHASE 2: FARM ATTACKS")
-            print("="*60)
-
-            fleet.send_farm_attacks(
-                planet=farming_config.planet,
-                ships=farming_config.ships,
-                targets=farming_config.targets,
-            )
 
         print("\n" + "="*60)
         print("ALL COMPLETE!")

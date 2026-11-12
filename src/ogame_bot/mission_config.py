@@ -16,13 +16,6 @@ class ExpeditionConfig:
     max_expeditions: int | None = None
 
 
-@dataclass(frozen=True)
-class FarmingConfig:
-    planet: str
-    ships: dict[str, int]
-    targets: list[tuple[int, int, int]]
-
-
 def load_expeditions(path: Path) -> ExpeditionConfig:
     data = _load_json(path)
     ships = _require_ships(data, path)
@@ -38,14 +31,6 @@ def load_expeditions(path: Path) -> ExpeditionConfig:
         planets=planets,
         max_expeditions=max_expeditions,
     )
-
-
-def load_farming(path: Path) -> FarmingConfig:
-    data = _load_json(path)
-    planet = _require_str(data, "planet", path)
-    ships = _require_ships(data, path)
-    targets = _require_targets(data, path)
-    return FarmingConfig(planet=planet, ships=ships, targets=targets)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -90,17 +75,3 @@ def _require_ships(data: dict[str, Any], path: Path) -> dict[str, int]:
         parsed[name] = count
     return parsed
 
-
-def _require_targets(data: dict[str, Any], path: Path) -> list[tuple[int, int, int]]:
-    targets = data.get("targets")
-    if not isinstance(targets, list) or not targets:
-        raise ValueError(f"{path}: 'targets' must be a non-empty array")
-    parsed: list[tuple[int, int, int]] = []
-    for target in targets:
-        if not isinstance(target, (list, tuple)) or len(target) != 3:
-            raise ValueError(f"{path}: targets must be [galaxy, system, position] triples")
-        galaxy, system, position = target
-        if not all(isinstance(value, int) and value > 0 for value in (galaxy, system, position)):
-            raise ValueError(f"{path}: target coordinates must be positive integers")
-        parsed.append((galaxy, system, position))
-    return parsed
